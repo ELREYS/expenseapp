@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
   final Function addTx;
-  final titleInpCtrl = TextEditingController();
-  final amountInpCtrl = TextEditingController();
 
   NewTransaction(this.addTx);
+
+  @override
+  _NewTransactionState createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final titleInpCtrl = TextEditingController();
+
+  final amountInpCtrl = TextEditingController();
+
+  void submitData() {
+    final enteredTitle = titleInpCtrl.text;
+    final enteredAmount = double.parse(amountInpCtrl.text);
+
+    try {
+      if (enteredTitle.isEmpty || enteredAmount <= 0) {
+        //return;
+      } else {
+        widget.addTx(enteredTitle, (enteredAmount));
+
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +43,20 @@ class NewTransaction extends StatelessWidget {
             TextField(
               decoration: InputDecoration(labelText: "Title", hintText: "Task"),
               controller: titleInpCtrl,
+              onSubmitted: (_) => submitData(),
             ),
             TextField(
+              keyboardType: TextInputType.datetime,
               decoration:
                   InputDecoration(labelText: "Amount", hintText: "Task"),
               controller: amountInpCtrl,
+              onSubmitted: (_) => submitData(),
             ),
             TextButton(
                 onPressed: () {
                   print(titleInpCtrl.text);
                   print(amountInpCtrl.text);
-                  addTx(titleInpCtrl.text, double.parse(amountInpCtrl.text));
+                  submitData();
                 },
                 child: Text("Add Transaction"))
           ],
